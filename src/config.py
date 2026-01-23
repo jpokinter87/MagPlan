@@ -2,9 +2,14 @@
 Configuration et constantes du générateur de planning
 """
 
-# Chemins
-DOSSIER_DATA = "data"
-DOSSIER_SORTIES = "sorties"
+import os
+
+# Racine du projet (parent du dossier src)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Chemins absolus basés sur la racine du projet
+DOSSIER_DATA = os.path.join(PROJECT_ROOT, "data")
+DOSSIER_SORTIES = os.path.join(PROJECT_ROOT, "sorties")
 FICHIER_REPARTITION_DEFAUT = "tableau_repartition_audiences.xlsx"
 
 # Couleurs de base

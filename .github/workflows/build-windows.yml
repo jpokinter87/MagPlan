@@ -27,11 +27,11 @@ jobs:
 
       - name: Build de l'exécutable GUI
         run: |
-          pyinstaller --onefile --windowed --name MagPlan generer_planning_gui.py
+          pyinstaller --onefile --windowed --name MagPlan scripts/generer_planning_gui.py
 
       - name: Build de l'exécutable Console
         run: |
-          pyinstaller --onefile --name MagPlan-Console generer_planning_mensuel.py
+          pyinstaller --onefile --name MagPlan-Console scripts/generer_planning_mensuel.py
 
       - name: Upload des artifacts
         uses: actions/upload-artifact@v4

@@ -12,14 +12,14 @@ MagPlan est une application Python qui génère des fichiers Excel de planning m
 
 ```bash
 # Générer le planning d'un mois (CLI)
-python generer_planning_mensuel.py <mois> <annee>
-# Exemple : python generer_planning_mensuel.py 2 2025
+python scripts/generer_planning_mensuel.py <mois> <annee>
+# Exemple : python scripts/generer_planning_mensuel.py 2 2025
 
 # Générer les 12 mois d'une année
-python generer_annee_complete.py <annee>
+python scripts/generer_annee_complete.py <annee>
 
 # Lancer l'interface graphique (tkinter)
-python generer_planning_gui.py
+python scripts/generer_planning_gui.py
 ```
 
 ### Dépendances
@@ -39,21 +39,22 @@ pyinstaller MagPlan.spec
 ## Architecture
 
 ```
-generer_planning_mensuel.py  # Point d'entrée CLI - génération d'un mois
-generer_planning_gui.py      # Point d'entrée GUI (tkinter)
-generer_annee_complete.py    # Génération par lot pour une année complète
+scripts/
+├── generer_planning_gui.py      # Point d'entrée GUI (tkinter)
+├── generer_planning_mensuel.py  # Point d'entrée CLI - génération d'un mois
+└── generer_annee_complete.py    # Génération par lot pour une année complète
 
 src/
+├── config.py        # Constantes : couleurs (CODES_COULEURS), définitions des audiences, chemins
 ├── planning.py      # Orchestration principale : creer_planning_mensuel() coordonne tous les générateurs
-├── config.py        # Constantes : couleurs (CODES_COULEURS), définitions des audiences, structure des permanences
 ├── repartition.py   # Charge les règles de répartition depuis Excel (charger_tableau_repartition)
 ├── audiences.py     # Génère les lignes d'audiences par catégorie (matin, après-midi, civil, EP, ECOFI, assises)
 ├── permanences.py   # Génère les lignes de permanences (permanences, débats JLD, nuit)
 ├── dates.py         # Calendrier des jours fériés français et utilitaires de dates (est_jour_ferie, calculer_numero_semaine)
 └── styles.py        # Utilitaires de style Excel (couleurs, bordures, polices via openpyxl)
 
-data/                              # Entrée : tableau_repartition_audiences.xlsx
-sorties/                           # Sortie : fichiers planning générés (MM - MOIS AAAA.xlsx)
+data/                # Entrée : tableau_repartition_audiences.xlsx
+sorties/             # Sortie : fichiers planning générés (MM - MOIS AAAA.xlsx)
 ```
 
 ## Concepts clés

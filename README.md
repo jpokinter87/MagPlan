@@ -43,7 +43,7 @@ MagPlan/
 ### Interface graphique (recommandé)
 
 ```bash
-python generer_planning_gui.py
+python scripts/generer_planning_gui.py
 ```
 
 L'interface propose deux onglets :
@@ -54,12 +54,12 @@ L'interface propose deux onglets :
 
 ```bash
 # Générer un mois
-python generer_planning_mensuel.py <mois> <année>
-python generer_planning_mensuel.py 2 2026    # Février 2026
+python scripts/generer_planning_mensuel.py <mois> <année>
+python scripts/generer_planning_mensuel.py 2 2026    # Février 2026
 
 # Générer une année complète
-python generer_annee_complete.py <année>
-python generer_annee_complete.py 2026        # Les 12 mois de 2026
+python scripts/generer_annee_complete.py <année>
+python scripts/generer_annee_complete.py 2026        # Les 12 mois de 2026
 ```
 
 ### Fichiers générés
@@ -127,14 +127,25 @@ Une release GitHub sera créée automatiquement avec les exécutables.
 ## Architecture du code
 
 ```
-src/
-├── config.py       # Constantes, couleurs, définitions des audiences
-├── planning.py     # Orchestration de la génération
-├── repartition.py  # Chargement des règles de répartition
-├── audiences.py    # Génération des lignes d'audiences
-├── permanences.py  # Génération des lignes de permanences
-├── dates.py        # Jours fériés et calculs de dates
-└── styles.py       # Formatage Excel (couleurs, bordures, polices)
+MagPlan/
+├── MagPlan.exe              # Exécutable Windows (GUI)
+├── MagPlan-Console.exe      # Exécutable Windows (CLI)
+├── README.md                # Documentation
+├── CLAUDE.md                # Instructions pour Claude Code
+├── data/                    # Données d'entrée
+│   └── tableau_repartition_audiences.xlsx
+├── scripts/                 # Points d'entrée Python
+│   ├── generer_planning_gui.py
+│   ├── generer_planning_mensuel.py
+│   └── generer_annee_complete.py
+└── src/                     # Modules Python
+    ├── config.py            # Constantes, couleurs, audiences
+    ├── planning.py          # Orchestration de la génération
+    ├── repartition.py       # Chargement des règles
+    ├── audiences.py         # Génération des lignes d'audiences
+    ├── permanences.py       # Génération des lignes de permanences
+    ├── dates.py             # Jours fériés et calculs de dates
+    └── styles.py            # Formatage Excel
 ```
 
 ## Dépannage

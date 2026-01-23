@@ -11,8 +11,9 @@ import subprocess
 import platform
 from datetime import datetime
 
-# Ajouter le répertoire src au path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# Ajouter la racine du projet au path (parent du dossier scripts)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
 
 from src.config import DOSSIER_DATA, DOSSIER_SORTIES, MOIS_FR
 from src.planning import (
