@@ -1,0 +1,63 @@
+name: Build Windows Executable
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:  # Permet le déclenchement manuel
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Python 3.13 (64 bits)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          architecture: 'x64'
+
+      - name: Installation des dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl pyinstaller
+
+      - name: Build de l'exécutable GUI
+        run: |
+          pyinstaller --onefile --windowed --name MagPlan generer_planning_gui.py
+
+      - name: Build de l'exécutable Console
+        run: |
+          pyinstaller --onefile --name MagPlan-Console generer_planning_mensuel.py
+
+      - name: Upload des artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagPlan-Windows-x64
+          path: |
+            dist/MagPlan.exe
+            dist/MagPlan-Console.exe
+          retention-days: 90
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Télécharger les artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: MagPlan-Windows-x64
+          path: dist/
+
+      - name: Créer la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/MagPlan.exe
+            dist/MagPlan-Console.exe
+          generate_release_notes: true
