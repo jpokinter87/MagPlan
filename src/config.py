@@ -3,9 +3,17 @@ Configuration et constantes du générateur de planning
 """
 
 import os
+import sys
 
-# Racine du projet (parent du dossier src)
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Racine du projet
+# - En mode compilé (PyInstaller) : dossier de l'exécutable
+# - En mode script : parent du dossier src
+if getattr(sys, 'frozen', False):
+    # Exécutable PyInstaller
+    PROJECT_ROOT = os.path.dirname(sys.executable)
+else:
+    # Script Python
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Chemins absolus basés sur la racine du projet
 DOSSIER_DATA = os.path.join(PROJECT_ROOT, "data")
