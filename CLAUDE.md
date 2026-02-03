@@ -62,3 +62,4 @@ Flux de données : `data/tableau_repartition_audiences.xlsx` → `src/` → `sor
 - Couleurs : chaînes hex 8 caractères avec préfixe alpha (ex: `'FFFF0000'` pour rouge)
 - `appliquer_style_cellule()` applique automatiquement du texte blanc sur fonds sombres
 - Les formules Excel générées utilisent les noms de fonctions en français (IF→SI, etc.)
+- **Affichage des cellules** : seuls les codes composés (avec "/", ex: "V/C") affichent du texte ; les codes simples (A, M, E...) n'affichent que la couleur de fond
