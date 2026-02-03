@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Ce fichier fournit des instructions à Claude Code (claude.ai/code) pour travailler avec ce dépôt.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Présentation du projet
 
@@ -28,45 +28,37 @@ python scripts/generer_planning_gui.py
 pip install openpyxl
 ```
 
-Le projet utilise `uv` pour la gestion des paquets (voir `.python-version` et `uv.lock`).
+Python 3.13+ requis. Le projet utilise `uv` pour la gestion des paquets.
 
-### Construire l'exécutable (PyInstaller)
+### Construire l'exécutable Windows (PyInstaller)
+
+Le workflow GitHub Actions `.github/workflows/build-windows.yml` compile automatiquement les exécutables. Pour déclencher manuellement :
 
 ```bash
-pyinstaller MagPlan.spec
+git tag v1.x.x && git push origin v1.x.x
 ```
 
 ## Architecture
 
-```
-scripts/
-├── generer_planning_gui.py      # Point d'entrée GUI (tkinter)
-├── generer_planning_mensuel.py  # Point d'entrée CLI - génération d'un mois
-└── generer_annee_complete.py    # Génération par lot pour une année complète
+Le point d'entrée principal est `src/planning.py:creer_planning_mensuel()` qui orchestre la génération :
+1. Charge les règles depuis `repartition.py:charger_tableau_repartition()`
+2. Génère les lignes de permanences via `permanences.py`
+3. Génère les audiences via `audiences.py`
+4. Applique les styles via `styles.py`
 
-src/
-├── config.py        # Constantes : couleurs (CODES_COULEURS), définitions des audiences, chemins
-├── planning.py      # Orchestration principale : creer_planning_mensuel() coordonne tous les générateurs
-├── repartition.py   # Charge les règles de répartition depuis Excel (charger_tableau_repartition)
-├── audiences.py     # Génère les lignes d'audiences par catégorie (matin, après-midi, civil, EP, ECOFI, assises)
-├── permanences.py   # Génère les lignes de permanences (permanences, débats JLD, nuit)
-├── dates.py         # Calendrier des jours fériés français et utilitaires de dates (est_jour_ferie, calculer_numero_semaine)
-└── styles.py        # Utilitaires de style Excel (couleurs, bordures, polices via openpyxl)
-
-data/                # Entrée : tableau_repartition_audiences.xlsx
-sorties/             # Sortie : fichiers planning générés (MM - MOIS AAAA.xlsx)
-```
+Flux de données : `data/tableau_repartition_audiences.xlsx` → `src/` → `sorties/MM - MOIS AAAA.xlsx`
 
 ## Concepts clés
 
-- **Répartition** : Règles de distribution chargées depuis `data/tableau_repartition_audiences.xlsx` définissant quelle section gère chaque type d'audience par jour de la semaine et numéro de semaine
-- **Codes section** : Lettres simples (A, M, V, E, S, P, N, C, etc.) associées aux couleurs dans `CODES_COULEURS`
-- **Numéro de semaine** : 1ère à 5ème occurrence d'un jour de la semaine dans le mois (pas la semaine ISO), calculé par `calculer_numero_semaine()`
-- **Structure du planning** : Ligne 1 = dates, lignes 2-11 = permanences, ligne 12 = débats JLD, ligne 13 = permanence de nuit, puis blocs d'audiences par horaire/catégorie
+- **Tableau de répartition** : Excel d'entrée avec colonnes par jour (5 cols/jour pour semaines 1-5), lignes par type d'audience. Chargé par `charger_tableau_repartition()` qui extrait les règles lignes 4-33
+- **Codes section** : Lettres (A, M, V, E, S, P, N, C...) mappées vers couleurs dans `config.py:CODES_COULEURS`
+- **Numéro de semaine** : Nième occurrence du jour dans le mois (pas ISO), via `dates.py:calculer_numero_semaine()`
+- **Jours fériés français** : Fixes + mobiles (Pâques, Ascension, Pentecôte) calculés dans `dates.py:est_jour_ferie()`
+- **Structure planning** : Ligne 1=dates, 2-11=permanences, 12=débats JLD, 13=nuit, puis audiences par catégorie
 
 ## Conventions de code
 
 - Tous les textes utilisateur en français
-- Couleurs stockées en chaînes hexadécimales de 8 caractères avec préfixe alpha (ex: 'FFFF0000' pour rouge)
-- La fonction `appliquer_style_cellule()` détecte automatiquement les fonds sombres et applique du texte blanc
-- Les formules utilisent les noms de fonctions Excel en français dans les fichiers générés
+- Couleurs : chaînes hex 8 caractères avec préfixe alpha (ex: `'FFFF0000'` pour rouge)
+- `appliquer_style_cellule()` applique automatiquement du texte blanc sur fonds sombres
+- Les formules Excel générées utilisent les noms de fonctions en français (IF→SI, etc.)
